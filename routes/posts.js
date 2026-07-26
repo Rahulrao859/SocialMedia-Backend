@@ -3,11 +3,12 @@ const router = express.Router();
 const Post = require('../models/Post');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const dbReady = require('../middleware/dbReady');
 
 // @route   GET /api/posts
 // @desc    Get all posts
 // @access  Private
-router.get('/', auth, async (req, res) => {
+router.get('/', dbReady, auth, async (req, res) => {
     try {
         const posts = await Post.find()
             .sort({ createdAt: -1 }) // Most recent first
@@ -23,7 +24,7 @@ router.get('/', auth, async (req, res) => {
 // @route   POST /api/posts
 // @desc    Create a new post
 // @access  Private
-router.post('/', auth, upload.single('image'), async (req, res) => {
+router.post('/', dbReady, auth, upload.single('image'), async (req, res) => {
     try {
         const { text } = req.body;
         const image = req.file ? `/uploads/${req.file.filename}` : null;
@@ -52,7 +53,7 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 // @route   POST /api/posts/:id/like
 // @desc    Toggle like on a post
 // @access  Private
-router.post('/:id/like', auth, async (req, res) => {
+router.post('/:id/like', dbReady, auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
@@ -88,7 +89,7 @@ router.post('/:id/like', auth, async (req, res) => {
 // @route   POST /api/posts/:id/comment
 // @desc    Add a comment to a post
 // @access  Private
-router.post('/:id/comment', auth, async (req, res) => {
+router.post('/:id/comment', dbReady, auth, async (req, res) => {
     try {
         const { text } = req.body;
 
@@ -120,7 +121,7 @@ router.post('/:id/comment', auth, async (req, res) => {
 // @route   DELETE /api/posts/:id
 // @desc    Delete a post
 // @access  Private (only post owner)
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', dbReady, auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 

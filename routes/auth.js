@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const dbReady = require('../middleware/dbReady');
 
 // @route   POST /api/auth/signup
 // @desc    Register a new user
 // @access  Public
-router.post('/signup', async (req, res) => {
+router.post('/signup', dbReady, async (req, res) => {
     try {
         const { email, password, username } = req.body;
 
@@ -64,7 +65,7 @@ router.post('/signup', async (req, res) => {
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post('/login', dbReady, async (req, res) => {
     try {
         const { email, password } = req.body;
 
